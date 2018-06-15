@@ -13,6 +13,10 @@ public class Usuario {
     private String estado;
     private List<Trabalho> trabalhos;
 
+    public Usuario() {
+
+    }
+
     public Usuario(String nome, String email, String senha, String cidade,
             String estado) {
         this.nome = nome;

@@ -15,6 +15,8 @@ CREATE TABLE Trabalho(
 	codigo SERIAL PRIMARY KEY,
 	descricao VARCHAR,
 	contratante VARCHAR,
+	contratado VARCHAR,
+	FOREIGN KEY (contratado) REFERENCES Usuario(email),
 	FOREIGN KEY (contratante) REFERENCES Usuario(email)
 );
 
