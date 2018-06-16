@@ -10,6 +10,7 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -54,7 +55,7 @@ public class UsuarioResource {
             UsuarioDAO dao = new UsuarioDAO();
             if (dao.login(obj.getString("email").toString(),
                     obj.getString("senha").toString())) {
-                    return "cadastrado";
+                return "cadastrado";
             }
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
@@ -62,6 +63,30 @@ public class UsuarioResource {
             Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "nao cadastrado";
+    }
+
+    @POST
+    @Path("cadastro")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN)
+    public String cadastrar(String json) {
+
+        JSONObject obj = new JSONObject(json);
+        try {
+            UsuarioDAO dao = new UsuarioDAO();
+            Gson gson = new Gson();
+            Usuario user = gson.fromJson(json,Usuario.class);
+            
+            if(dao.salvar(user)){
+                return "cadastrado com sucesso";
+            }
+            return user.toString();
+        } catch (SQLException ex) {
+            return "erro no banco";
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "k";
     }
 
 }
