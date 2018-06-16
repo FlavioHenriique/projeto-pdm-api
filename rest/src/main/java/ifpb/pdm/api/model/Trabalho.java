@@ -13,13 +13,20 @@ public class Trabalho {
     private float valor;
     private String horario;
     private String data;
+    private String categoria;
     private String descricao;
     private Usuario contratado;
     private Usuario contratante;
     private List<Usuario> solicitantes;
 
+    public Trabalho() {
+
+    }
+
     public Trabalho(String titulo, String estado, String cidade, float valor,
-            String horario, String data, String descricao, Usuario contratante, int codigo) {
+            String horario, String data, String descricao, Usuario contratante, int codigo,
+            String categoria) {
+        this.categoria = categoria;
         this.titulo = titulo;
         this.codigo = codigo;
         this.estado = estado;
@@ -31,6 +38,14 @@ public class Trabalho {
         this.contratante = contratante;
         this.solicitantes = new ArrayList<>();
 
+    }
+
+    public String getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(String categoria) {
+        this.categoria = categoria;
     }
 
     public Usuario getContratado() {
@@ -123,17 +138,19 @@ public class Trabalho {
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 59 * hash + Objects.hashCode(this.titulo);
-        hash = 59 * hash + Objects.hashCode(this.estado);
-        hash = 59 * hash + Objects.hashCode(this.cidade);
-        hash = 59 * hash + this.codigo;
-        hash = 59 * hash + Float.floatToIntBits(this.valor);
-        hash = 59 * hash + Objects.hashCode(this.horario);
-        hash = 59 * hash + Objects.hashCode(this.data);
-        hash = 59 * hash + Objects.hashCode(this.descricao);
-        hash = 59 * hash + Objects.hashCode(this.contratante);
-        hash = 59 * hash + Objects.hashCode(this.solicitantes);
+        int hash = 3;
+        hash = 97 * hash + Objects.hashCode(this.titulo);
+        hash = 97 * hash + Objects.hashCode(this.estado);
+        hash = 97 * hash + Objects.hashCode(this.cidade);
+        hash = 97 * hash + this.codigo;
+        hash = 97 * hash + Float.floatToIntBits(this.valor);
+        hash = 97 * hash + Objects.hashCode(this.horario);
+        hash = 97 * hash + Objects.hashCode(this.data);
+        hash = 97 * hash + Objects.hashCode(this.categoria);
+        hash = 97 * hash + Objects.hashCode(this.descricao);
+        hash = 97 * hash + Objects.hashCode(this.contratado);
+        hash = 97 * hash + Objects.hashCode(this.contratante);
+        hash = 97 * hash + Objects.hashCode(this.solicitantes);
         return hash;
     }
 
@@ -170,7 +187,13 @@ public class Trabalho {
         if (!Objects.equals(this.data, other.data)) {
             return false;
         }
+        if (!Objects.equals(this.categoria, other.categoria)) {
+            return false;
+        }
         if (!Objects.equals(this.descricao, other.descricao)) {
+            return false;
+        }
+        if (!Objects.equals(this.contratado, other.contratado)) {
             return false;
         }
         if (!Objects.equals(this.contratante, other.contratante)) {
@@ -185,10 +208,11 @@ public class Trabalho {
     @Override
     public String toString() {
         return "Trabalho{" + "titulo=" + titulo + ", estado=" + estado + ","
-                + " cidade=" + cidade + ", codigo=" + codigo + ", valor="
-                + valor + ", horario=" + horario + ", data=" + data + ", "
-                + "descricao=" + descricao + ", contratante=" + contratante
-                + ", solicitantes=" + solicitantes + '}';
+                + " cidade=" + cidade + ", codigo=" + codigo + ", valor=" + valor
+                + ", horario=" + horario + ", data=" + data + ", categoria=" +
+                categoria + ", descricao=" + descricao + ", contratado=" + 
+                contratado + ", contratante=" + contratante + ", solicitantes="
+                + solicitantes + '}';
     }
 
 }
