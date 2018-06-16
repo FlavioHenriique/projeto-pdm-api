@@ -16,6 +16,7 @@ CREATE TABLE Trabalho(
 	descricao VARCHAR,
 	contratante VARCHAR,
 	contratado VARCHAR,
+	categoria varchar,
 	FOREIGN KEY (contratado) REFERENCES Usuario(email),
 	FOREIGN KEY (contratante) REFERENCES Usuario(email)
 );
