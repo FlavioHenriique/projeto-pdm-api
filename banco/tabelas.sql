@@ -10,7 +10,7 @@ CREATE TABLE Trabalho(
 	estado VARCHAR,
 	cidade VARCHAR,
 	valor real,
-	horario timestamp,
+	horario varchar,
 	data date,
 	codigo SERIAL PRIMARY KEY,
 	descricao VARCHAR,
@@ -24,6 +24,7 @@ CREATE TABLE SOLICITA_TRABALHO(
 	emailUsuario VARCHAR,
 	codTrabalho int,
 	FOREIGN KEY (emailUsuario) REFERENCES Usuario(email),
-	FOREIGN KEY (codTrabalho) REFERENCES Trabalho(codigo),
+	FOREIGN KEY (codTrabalho) REFERENCES Trabalho(codigo)
+	ON DELETE CASCADE,
 	PRIMARY KEY (emailUsuario,codTrabalho)
 );
