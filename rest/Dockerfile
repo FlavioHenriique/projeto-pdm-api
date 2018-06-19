@@ -1,3 +1,4 @@
 FROM glassfish
 
-COPY target/pdm-api.war domains/domain1/applications/__internal
+COPY target/pdm-api.war $GLASSFISH_HOME/glassfish/domains/domain1/autodeploy
+

@@ -14,6 +14,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -51,21 +52,22 @@ public class UsuarioResource {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.TEXT_PLAIN)
-    public String login(String json) {
+    public Response login(String json) {
         JSONObject obj = new JSONObject(json);
         try {
             UsuarioDAO dao = new UsuarioDAO();
             if (dao.login(obj.getString("email").toString(),
                     obj.getString("senha").toString())) {
-                return "cadastrado";
+                Usuario user = dao.buscar(obj.getString("email").toString());
+                Response.status(Status.CREATED).entity(gson.toJson(user)).build();
+
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return "nao cadastrado";
+        return Response.status(Status.NOT_FOUND).build();
     }
 
     @POST
@@ -76,7 +78,6 @@ public class UsuarioResource {
 
         try {
             UsuarioDAO dao = new UsuarioDAO();
-            Gson gson = new Gson();
             Usuario user = gson.fromJson(json, Usuario.class);
             System.out.println(user.toString());
             if (dao.buscar(user.getEmail()) == null) {
@@ -96,6 +97,27 @@ public class UsuarioResource {
         }
 
         return Response.ok().entity(null).build();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response atualizarUsuario(String json) {
+
+        try {
+            UsuarioDAO dao = new UsuarioDAO();
+            Usuario user = dao.atualizar(gson.fromJson(json, Usuario.class));
+            
+            return Response.status(Status.OK).entity(gson.toJson(user)).build();
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        return Response.status(Status.FORBIDDEN).build();
     }
 
 }

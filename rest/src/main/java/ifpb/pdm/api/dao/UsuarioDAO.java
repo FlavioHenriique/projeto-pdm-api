@@ -68,4 +68,21 @@ public class UsuarioDAO {
         stmt.close();
         return false;
     }
+    
+    public Usuario atualizar(Usuario u) throws SQLException{
+        
+        String sql = "UPDATE Usuario set nome =?, senha = ?, cidade = ?,"
+                + " estado = ? WHERE email = ?;";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, u.getNome());
+        stmt.setString(2, u.getSenha());
+        stmt.setString(3, u.getCidade());
+        stmt.setString(4, u.getEstado());
+        stmt.setString(5, u.getEmail());
+        
+        stmt.execute();
+        stmt.close();
+        
+        return buscar(u.getEmail());
+    }
 }
