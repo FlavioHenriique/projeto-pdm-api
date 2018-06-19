@@ -25,20 +25,23 @@ import org.json.JSONObject;
 @Path("usuario")
 public class UsuarioResource {
 
+    Gson gson = new Gson();
+
     @GET
     @Path("/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response buscarUsuario(@PathParam("email") String email) {
 
         try {
             UsuarioDAO dao = new UsuarioDAO();
             Usuario user = dao.buscar(email);
             if (user != null) {
-                return Response.ok().entity(user.toString()).build();
+                return Response.ok().entity(gson.toJson(user)).build();
             } else {
-                return Response.ok().entity("Não encontrado").build();
+                return Response.status(Status.NOT_FOUND).build();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -58,7 +61,7 @@ public class UsuarioResource {
                 return "cadastrado";
             }
         } catch (SQLException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -69,24 +72,30 @@ public class UsuarioResource {
     @Path("cadastro")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN)
-    public String cadastrar(String json) {
+    public Response cadastrar(String json) {
 
-        JSONObject obj = new JSONObject(json);
         try {
             UsuarioDAO dao = new UsuarioDAO();
             Gson gson = new Gson();
-            Usuario user = gson.fromJson(json,Usuario.class);
-            
-            if(dao.salvar(user)){
-                return "cadastrado com sucesso";
+            Usuario user = gson.fromJson(json, Usuario.class);
+            System.out.println(user.toString());
+            if (dao.buscar(user.getEmail()) == null) {
+                if (dao.salvar(user)) {
+                    return Response.status(Status.CREATED).build();
+
+                }
+            } else {
+                return Response.status(Status.FORBIDDEN).build();
             }
-            return user.toString();
+
         } catch (SQLException ex) {
-            return "erro no banco";
+            ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(UsuarioResource.class.getName())
+                    .log(Level.SEVERE, null, ex);
         }
-        return "k";
+
+        return Response.ok().entity(null).build();
     }
 
 }

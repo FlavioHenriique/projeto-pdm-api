@@ -48,7 +48,7 @@ public class UsuarioDAO {
             u.setNome(rs.getString("nome"));
             u.setSenha(rs.getString("senha"));
             stmt.close();
-            System.out.println("aqui");
+            
             return u;
         }
         stmt.close();

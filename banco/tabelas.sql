@@ -2,7 +2,8 @@ CREATE TABLE Usuario(
 	nome VARCHAR,
 	email VARCHAR PRIMARY KEY,
 	senha VARCHAR,
-	estado VARCHAR
+	estado VARCHAR,
+	cidade VARCHAR
 );
 
 CREATE TABLE Trabalho(
@@ -17,14 +18,17 @@ CREATE TABLE Trabalho(
 	contratante VARCHAR,
 	contratado VARCHAR,
 	categoria varchar,
-	FOREIGN KEY (contratado) REFERENCES Usuario(email),
+	FOREIGN KEY (contratado) REFERENCES Usuario(email)
+	ON DELETE CASCADE,
 	FOREIGN KEY (contratante) REFERENCES Usuario(email)
+	ON DELETE CASCADE
 );
 
 CREATE TABLE SOLICITA_TRABALHO(
 	emailUsuario VARCHAR,
 	codTrabalho int,
-	FOREIGN KEY (emailUsuario) REFERENCES Usuario(email),
+	FOREIGN KEY (emailUsuario) REFERENCES Usuario(email)
+	ON DELETE CASCADE,
 	FOREIGN KEY (codTrabalho) REFERENCES Trabalho(codigo)
 	ON DELETE CASCADE,
 	PRIMARY KEY (emailUsuario,codTrabalho)
