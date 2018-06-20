@@ -33,19 +33,46 @@ public class SolicitacaoDAO {
             ClassNotFoundException {
 
         String sql = "SELECT emailUsuario from solicita_trabalho"
-                + " WHERE codTrabalho = ? ;";
+                + " WHERE codTrabalho = ? AND estado ilike 'pendente';";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, trabalho);
         ResultSet rs = stmt.executeQuery();
-        
+
         List<Usuario> lista = new ArrayList<>();
         UsuarioDAO dao = new UsuarioDAO();
-        while(rs.next()){
+        while (rs.next()) {
             Usuario u = dao.buscar(rs.getString("emailUsuario"));
             lista.add(u);
         }
-        
+
         return lista;
+    }
+
+    public void aceitarSolicitacao(String email, int trabalho) throws SQLException {
+
+        String sql = "UPDATE solicita_trabalho set estado = 'aceita' WHERE"
+                + " emailUsuario = ? AND codTrabalho = ? ;";
+
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, email);
+        stmt.setInt(2, trabalho);
+
+        stmt.execute();
+        stmt.close();
+
+    }
+
+    public void recusarSolicitacao(String email, int trabalho) throws SQLException {
+
+        String sql = "DELETE FROM Solicita_trabalho WHERE emailUsuario = ? "
+                + " AND codTrabalho = ? ;";
+
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, email);
+        stmt.setInt(2, trabalho);
+
+        stmt.execute();
+        stmt.close();
     }
 
 }

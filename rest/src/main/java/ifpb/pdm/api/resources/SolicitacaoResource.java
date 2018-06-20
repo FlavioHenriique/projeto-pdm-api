@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
@@ -52,8 +54,7 @@ public class SolicitacaoResource {
 
     @GET
     @Path("/{trabalho}")
-    public Response buscarSolicitacoesTrabalho(@PathParam("trabalho")
-            int trabalho) {
+    public Response buscarSolicitacoesTrabalho(@PathParam("trabalho") int trabalho) {
 
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
@@ -68,6 +69,51 @@ public class SolicitacaoResource {
                     log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response aceitarSolicitacao(String json) {
+
+        JSONObject dados = new JSONObject(json);
+        
+        try {
+            SolicitacaoDAO dao = new SolicitacaoDAO();
+            dao.aceitarSolicitacao(dados.getString("emailUsuario"),
+                    dados.getInt("codTrabalho"));
+
+            return Response.status(Status.OK).build();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(SolicitacaoResource.class.getName())
+                    .log(Level.SEVERE, null, ex);
+        }
+
+        return Response.status(Status.BAD_REQUEST).build();
+    }
+
+    @POST
+    @Path("recusar")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response recusarSolicitacao(String json) {
+
+        JSONObject dados = new JSONObject(json);
+        
+        try {
+            SolicitacaoDAO dao = new SolicitacaoDAO();
+            dao.recusarSolicitacao(dados.getString("emailusuario"),
+                    dados.getInt("codtrabalho"));
+
+            return Response.ok().build();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        
+        return Response.status(Status.USE_PROXY).build();
     }
 
 }
