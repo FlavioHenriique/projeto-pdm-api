@@ -60,13 +60,14 @@ public class TrabalhoDAO {
 
     public Trabalho buscarTrabalho(int codigo) throws SQLException, ClassNotFoundException {
 
-        String sql = "SELECT * FROM TRABALHO WHERE CODIGO =? ;";
+        String sql = "SELECT * FROM Trabalho WHERE codigo = ? ;";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, codigo);
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
             UsuarioDAO dao = new UsuarioDAO();
+            
             Trabalho t = new Trabalho();
             t.setCidade(rs.getString("cidade"));
             t.setCodigo(rs.getInt("codigo"));
@@ -82,6 +83,7 @@ public class TrabalhoDAO {
 
             rs.close();
             stmt.close();
+            
             return t;
 
         }
@@ -122,15 +124,37 @@ public class TrabalhoDAO {
         }
         return lista;
     }
-    
-    
-    public void deletar(int trabalho) throws SQLException{
-        
+
+    public void deletar(int trabalho) throws SQLException {
+
         String sql = "DELETE FROM Trabalho WHERE codigo = ?;";
-        
+
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setInt(1, trabalho);
         stmt.execute();
         stmt.close();
     }
+
+    public Trabalho atualizar(Trabalho t) throws SQLException, ClassNotFoundException {
+
+        String sql = "UPDATE Trabalho set cidade = ?, estado = ?, titulo = ?,"
+                + " descricao = ?, horario = ?, valor = ?, categoria = ? "
+                + "WHERE codigo = ?;";
+
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, t.getCidade());
+        stmt.setString(2, t.getEstado());
+        stmt.setString(3, t.getTitulo());
+        stmt.setString(4, t.getDescricao());
+        stmt.setString(5, t.getHorario());
+        stmt.setFloat(6, t.getValor());
+        stmt.setString(7, t.getCategoria());
+        stmt.setInt(8, t.getCodigo());
+
+        stmt.execute();
+        stmt.close();
+        System.out.println(t.getCodigo());
+        return buscarTrabalho(t.getCodigo());
+    }
+
 }

@@ -46,7 +46,7 @@ public class SolicitacaoResource {
             ex.printStackTrace();
 
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -65,8 +65,7 @@ public class SolicitacaoResource {
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).
-                    log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return Response.status(Status.BAD_REQUEST).build();
     }
@@ -96,8 +95,8 @@ public class SolicitacaoResource {
     @DELETE
     @Path("/{emailUsuario}/{codTrabalho}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response recusarSolicitacao(@PathParam("emailUsuario") String emailUsuario,
-            @PathParam("codTrabalho") int codTrabalho) {
+    public Response recusarSolicitacao(@PathParam("emailUsuario")
+            String emailUsuario, @PathParam("codTrabalho") int codTrabalho) {
 
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();

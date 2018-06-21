@@ -6,12 +6,7 @@ import ifpb.pdm.api.model.Usuario;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.Stateless;
-import javax.inject.Inject;
-import javax.json.Json;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -41,11 +36,8 @@ public class UsuarioResource {
             } else {
                 return Response.status(Status.NOT_FOUND).build();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioResource.class.getName())
-                    .log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -60,14 +52,16 @@ public class UsuarioResource {
             if (dao.login(obj.getString("email").toString(),
                     obj.getString("senha").toString())) {
                 Usuario user = dao.buscar(obj.getString("email").toString());
-                return Response.status(Status.ACCEPTED).entity(gson.toJson(user))
+
+                return Response.status(Status.ACCEPTED)
+                        .entity(gson.toJson(user))
                         .build();
 
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
         return Response.status(Status.NOT_FOUND).build();
     }
@@ -91,11 +85,8 @@ public class UsuarioResource {
                 return Response.status(Status.FORBIDDEN).build();
             }
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioResource.class.getName())
-                    .log(Level.SEVERE, null, ex);
         }
 
         return Response.ok().entity(null).build();
@@ -112,12 +103,9 @@ public class UsuarioResource {
 
             return Response.status(Status.OK).entity(gson.toJson(user)).build();
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
 
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UsuarioResource.class.getName())
-                    .log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.FORBIDDEN).build();
