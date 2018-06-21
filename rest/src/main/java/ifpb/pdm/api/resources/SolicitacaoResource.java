@@ -93,17 +93,15 @@ public class SolicitacaoResource {
         return Response.status(Status.BAD_REQUEST).build();
     }
 
-    @POST
-    @Path("recusar")
+    @DELETE
+    @Path("/{emailUsuario}/{codTrabalho}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response recusarSolicitacao(String json) {
+    public Response recusarSolicitacao(@PathParam("emailUsuario") String emailUsuario,
+            @PathParam("codTrabalho") int codTrabalho) {
 
-        JSONObject dados = new JSONObject(json);
-        
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
-            dao.recusarSolicitacao(dados.getString("emailusuario"),
-                    dados.getInt("codtrabalho"));
+            dao.recusarSolicitacao(emailUsuario, codTrabalho);
 
             return Response.ok().build();
 
@@ -113,7 +111,7 @@ public class SolicitacaoResource {
             ex.printStackTrace();
         }
         
-        return Response.status(Status.USE_PROXY).build();
+        return Response.status(Status.CONFLICT).build();
     }
 
 }

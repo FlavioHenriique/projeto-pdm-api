@@ -122,5 +122,15 @@ public class TrabalhoDAO {
         }
         return lista;
     }
-
+    
+    
+    public void deletar(int trabalho) throws SQLException{
+        
+        String sql = "DELETE FROM Trabalho WHERE codigo = ?;";
+        
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setInt(1, trabalho);
+        stmt.execute();
+        stmt.close();
+    }
 }

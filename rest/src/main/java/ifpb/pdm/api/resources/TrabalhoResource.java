@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -76,7 +77,7 @@ public class TrabalhoResource {
 
                 return Response.ok().entity(gson.toJson(
                         dao.buscaPorCidade(cidade))).build();
-                
+
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -84,5 +85,24 @@ public class TrabalhoResource {
             Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    @DELETE
+    @Path("/{codTrabalho}")
+    public Response deletarTrabalho(@PathParam("codTrabalho") int trabalho) {
+        
+        try {
+            TrabalhoDAO dao =  new TrabalhoDAO();
+            dao.deletar(trabalho);
+            
+            return Response.ok().build();
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        
+        return Response.status(Status.CONFLICT).build();
     }
 }
