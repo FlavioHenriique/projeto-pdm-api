@@ -53,7 +53,7 @@ public class UsuarioResource {
                     obj.getString("senha").toString())) {
                 Usuario user = dao.buscar(obj.getString("email").toString());
 
-                return Response.status(Status.ACCEPTED)
+                return Response.status(Status.OK)
                         .entity(gson.toJson(user))
                         .build();
 

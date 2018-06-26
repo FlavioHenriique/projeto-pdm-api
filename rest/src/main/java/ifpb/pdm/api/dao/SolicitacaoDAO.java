@@ -7,6 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SolicitacaoDAO {
 
@@ -18,6 +20,8 @@ public class SolicitacaoDAO {
 
     public boolean salvar(int trabalho, String email) throws SQLException {
 
+        abrirConexao();
+        
         String sql = "INSERT INTO solicita_trabalho (emailUsuario, codTrabalho,"
                 + " estado) VALUES (?,?,?) ;";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -26,12 +30,15 @@ public class SolicitacaoDAO {
         stmt.setString(3, "pendente");
         stmt.execute();
         stmt.close();
+        fecharConexao();
+        
         return true;
     }
 
     public List<Usuario> buscarSolicitacoes(int trabalho) throws SQLException,
             ClassNotFoundException {
-
+        abrirConexao();
+        
         String sql = "SELECT emailUsuario from solicita_trabalho"
                 + " WHERE codTrabalho = ? AND estado ilike 'pendente';";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -44,12 +51,15 @@ public class SolicitacaoDAO {
             Usuario u = dao.buscar(rs.getString("emailUsuario"));
             lista.add(u);
         }
-
+        fecharConexao();
+        
         return lista;
     }
 
     public void aceitarSolicitacao(String email, int trabalho) throws SQLException {
 
+        abrirConexao();
+        
         String sql = "UPDATE solicita_trabalho set estado = 'aceita' WHERE"
                 + " emailUsuario = ? AND codTrabalho = ? ;";
 
@@ -59,11 +69,13 @@ public class SolicitacaoDAO {
 
         stmt.execute();
         stmt.close();
-
+        fecharConexao();
     }
 
     public void recusarSolicitacao(String email, int trabalho) throws SQLException {
 
+        abrirConexao();
+        
         String sql = "DELETE FROM Solicita_trabalho WHERE emailUsuario = ? "
                 + " AND codTrabalho = ? ;";
 
@@ -73,6 +85,26 @@ public class SolicitacaoDAO {
 
         stmt.execute();
         stmt.close();
+        fecharConexao();
     }
-
+    
+    private void abrirConexao() {
+        try {
+            conn = Conexao.getConnection();
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(SolicitacaoDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void fecharConexao(){
+        
+        try {
+            conn.close();
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
 }
