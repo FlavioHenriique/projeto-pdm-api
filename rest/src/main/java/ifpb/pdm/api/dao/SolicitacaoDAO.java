@@ -1,5 +1,6 @@
 package ifpb.pdm.api.dao;
 
+import ifpb.pdm.api.model.Trabalho;
 import ifpb.pdm.api.model.Usuario;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
@@ -95,6 +96,29 @@ public class SolicitacaoDAO {
         fecharConexao();
     }
 
+    public List<Trabalho> minhasSolicitacoes(String email) throws SQLException,
+            ClassNotFoundException{
+        
+        abrirConexao();
+        List<Trabalho> lista = new ArrayList<>();
+       
+        String sql = "SELECT codTrabalho FROM solicita_trabalho WHERE "
+                + "emailUsuario = ? ;";
+        
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, email);
+        ResultSet rs = stmt.executeQuery();
+        TrabalhoDAO dao = new TrabalhoDAO();
+        
+        while(rs.next()){
+            Trabalho t = dao.buscarTrabalho(rs.getInt("codTrabalho"));
+            lista.add(t);
+        }
+        fecharConexao();
+        
+        return lista;
+    }
+    
     private void abrirConexao() {
         try {
             if (conn == null) {
@@ -119,5 +143,7 @@ public class SolicitacaoDAO {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
 
 }

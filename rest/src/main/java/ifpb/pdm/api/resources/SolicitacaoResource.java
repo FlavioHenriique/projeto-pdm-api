@@ -2,6 +2,7 @@ package ifpb.pdm.api.resources;
 
 import com.google.gson.Gson;
 import ifpb.pdm.api.dao.SolicitacaoDAO;
+import ifpb.pdm.api.model.Trabalho;
 import ifpb.pdm.api.model.Usuario;
 import java.sql.SQLException;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -111,6 +113,25 @@ public class SolicitacaoResource {
         }
         
         return Response.status(Status.CONFLICT).build();
+    }
+    
+    @GET
+    @Path("/busca/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response minhasSolicitacoes(@PathParam("email") String email){
+        
+        try {
+            SolicitacaoDAO dao = new SolicitacaoDAO();
+            List<Trabalho> lista = dao.minhasSolicitacoes(email);
+            
+            return Response.status(Status.OK).entity(gson.toJson(lista)).build();
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        return Response.status(Status.BAD_REQUEST).build();
     }
 
 }
