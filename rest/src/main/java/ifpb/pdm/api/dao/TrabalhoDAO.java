@@ -1,6 +1,7 @@
 package ifpb.pdm.api.dao;
 
 import ifpb.pdm.api.model.Trabalho;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -67,6 +68,7 @@ public class TrabalhoDAO {
         while (rs.next()) {
             Trabalho t = buscarTrabalho(rs.getInt("codigo"));
             lista.add(t);
+
         }
         rs.close();
         stmt.close();
@@ -88,25 +90,30 @@ public class TrabalhoDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            UsuarioDAO dao = new UsuarioDAO();
+            UsuarioDAO dao;
+            try {
+                dao = new UsuarioDAO();
 
-            Trabalho t = new Trabalho();
-            t.setCidade(rs.getString("cidade"));
-            t.setCodigo(rs.getInt("codigo"));
-            t.setContratado(dao.buscar(rs.getString("contratado")));
-            t.setContratante(dao.buscar(rs.getString("contratante")));
-            t.setData(rs.getDate("data").toString());
-            t.setDescricao(rs.getString("descricao"));
-            t.setCategoria(rs.getString("categoria"));
-            t.setEstado(rs.getString("estado"));
-            t.setHorario(rs.getString("horario"));
-            t.setTitulo(rs.getString("titulo"));
-            t.setValor(rs.getFloat("valor"));
+                Trabalho t = new Trabalho();
+                t.setCidade(rs.getString("cidade"));
+                t.setCodigo(rs.getInt("codigo"));
+                t.setContratado(dao.buscar(rs.getString("contratado")));
+                t.setContratante(dao.buscar(rs.getString("contratante")));
+                t.setData(rs.getDate("data").toString());
+                t.setDescricao(rs.getString("descricao"));
+                t.setCategoria(rs.getString("categoria"));
+                t.setEstado(rs.getString("estado"));
+                t.setHorario(rs.getString("horario"));
+                t.setTitulo(rs.getString("titulo"));
+                t.setValor(rs.getFloat("valor"));
 
-            rs.close();
-            stmt.close();
-            conn.close();
-            return t;
+                rs.close();
+                stmt.close();
+                conn.close();
+                return t;
+            } catch (NoSuchAlgorithmException ex) {
+                ex.printStackTrace();
+            }
 
         }
 
@@ -125,7 +132,7 @@ public class TrabalhoDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String sql = "SELECT * FROM Trabalho WHERE categoria = ?;";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, categoria);
@@ -137,11 +144,11 @@ public class TrabalhoDAO {
             Trabalho trabalho = buscarTrabalho(rs.getInt("codigo"));
             lista.add(trabalho);
         }
-        
+
         rs.close();
         stmt.close();
         conn.close();
-        
+
         return lista;
     }
 
@@ -163,11 +170,13 @@ public class TrabalhoDAO {
         while (rs.next()) {
             Trabalho trabalho = buscarTrabalho(rs.getInt("codigo"));
             lista.add(trabalho);
+            System.out.println(trabalho.toString());
         }
+
         rs.close();
         stmt.close();
         conn.close();
-        
+
         return lista;
     }
 
@@ -178,7 +187,7 @@ public class TrabalhoDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String sql = "DELETE FROM Trabalho WHERE codigo = ?;";
 
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -195,7 +204,7 @@ public class TrabalhoDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         String sql = "UPDATE Trabalho set cidade = ?, estado = ?, titulo = ?,"
                 + " descricao = ?, horario = ?, valor = ?, categoria = ? "
                 + "WHERE codigo = ?;";
@@ -213,7 +222,7 @@ public class TrabalhoDAO {
         stmt.execute();
         stmt.close();
         conn.close();
-        
+
         return buscarTrabalho(t.getCodigo());
     }
 

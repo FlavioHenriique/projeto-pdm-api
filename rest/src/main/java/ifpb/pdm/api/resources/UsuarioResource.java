@@ -3,6 +3,7 @@ package ifpb.pdm.api.resources;
 import com.google.gson.Gson;
 import ifpb.pdm.api.dao.UsuarioDAO;
 import ifpb.pdm.api.model.Usuario;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,6 +39,9 @@ public class UsuarioResource {
             }
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+         
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -62,6 +66,8 @@ public class UsuarioResource {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.NOT_FOUND).build();
     }
@@ -87,6 +93,8 @@ public class UsuarioResource {
 
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.ok().entity(null).build();
@@ -106,6 +114,8 @@ public class UsuarioResource {
         } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
 
+        } catch (NoSuchAlgorithmException ex) {   
+            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.FORBIDDEN).build();

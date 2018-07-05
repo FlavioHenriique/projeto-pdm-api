@@ -1,4 +1,4 @@
-FROM glassfish
+FROM payara/server-full
 
-COPY target/pdm-api.war $GLASSFISH_HOME/glassfish/domains/domain1/autodeploy
+COPY target/pdm-api.war $DEPLOY_DIR
 
