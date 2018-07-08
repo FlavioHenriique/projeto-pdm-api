@@ -37,11 +37,10 @@ public class SolicitacaoResource {
             if (dao.salvar(jo.getInt("trabalho"), jo.getString("email"))) {
 
                 return Response.status(Status.CREATED).build();
-
+                
             } else {
-
+                
                 return Response.status(Status.FORBIDDEN).build();
-
             }
         } catch (SQLException ex) {
 

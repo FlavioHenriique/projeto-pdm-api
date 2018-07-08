@@ -160,7 +160,7 @@ public class TrabalhoDAO {
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        String sql = "SELECT * FROM Trabalho WHERE cidade = ?;";
+        String sql = "SELECT * FROM Trabalho WHERE cidade ilike ?;";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, cidade);
         ResultSet rs = stmt.executeQuery();
