@@ -15,18 +15,15 @@ import java.util.logging.Logger;
 public class TrabalhoDAO {
 
     private Connection conn;
+    private UsuarioDAO dao;
 
-    public TrabalhoDAO() throws SQLException, ClassNotFoundException {
-
+    public TrabalhoDAO() throws SQLException, ClassNotFoundException,
+            NoSuchAlgorithmException {
+        conn = Conexao.getConnection();
+        dao = new UsuarioDAO();
     }
 
     public boolean cadastrar(Trabalho t) throws SQLException {
-
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         String sql = "INSERT INTO Trabalho (titulo,estado,cidade,valor,horario,"
                 + "data,descricao,contratante,categoria) values "
@@ -45,7 +42,7 @@ public class TrabalhoDAO {
         stmt.setString(9, t.getCategoria());
         stmt.execute();
         stmt.close();
-        conn.close();
+
         return true;
 
     }
@@ -53,11 +50,6 @@ public class TrabalhoDAO {
     public List<Trabalho> meusTrabalhos(String email) throws SQLException,
             ClassNotFoundException {
 
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
         String sql = "SELECT codigo FROM Trabalho WHERE contratante = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, email);
@@ -72,17 +64,12 @@ public class TrabalhoDAO {
         }
         rs.close();
         stmt.close();
-        conn.close();
+
         return lista;
     }
 
-    public Trabalho buscarTrabalho(int codigo) throws SQLException, ClassNotFoundException {
-
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public Trabalho buscarTrabalho(int codigo) throws SQLException,
+            ClassNotFoundException {
 
         String sql = "SELECT * FROM Trabalho WHERE codigo = ? ;";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -90,48 +77,34 @@ public class TrabalhoDAO {
         ResultSet rs = stmt.executeQuery();
 
         if (rs.next()) {
-            UsuarioDAO dao;
-            try {
-                dao = new UsuarioDAO();
 
-                Trabalho t = new Trabalho();
-                t.setCidade(rs.getString("cidade"));
-                t.setCodigo(rs.getInt("codigo"));
-                t.setContratado(dao.buscar(rs.getString("contratado")));
-                t.setContratante(dao.buscar(rs.getString("contratante")));
-                t.setData(rs.getDate("data").toString());
-                t.setDescricao(rs.getString("descricao"));
-                t.setCategoria(rs.getString("categoria"));
-                t.setEstado(rs.getString("estado"));
-                t.setHorario(rs.getString("horario"));
-                t.setTitulo(rs.getString("titulo"));
-                t.setValor(rs.getFloat("valor"));
+            Trabalho t = new Trabalho();
+            t.setCidade(rs.getString("cidade"));
+            t.setCodigo(rs.getInt("codigo"));
+            t.setContratado(dao.buscar(rs.getString("contratado")));
+            t.setContratante(dao.buscar(rs.getString("contratante")));
+            t.setData(rs.getDate("data").toString());
+            t.setDescricao(rs.getString("descricao"));
+            t.setCategoria(rs.getString("categoria"));
+            t.setEstado(rs.getString("estado"));
+            t.setHorario(rs.getString("horario"));
+            t.setTitulo(rs.getString("titulo"));
+            t.setValor(rs.getFloat("valor"));
 
-                rs.close();
-                stmt.close();
-                conn.close();
-                return t;
-            } catch (NoSuchAlgorithmException ex) {
-                ex.printStackTrace();
-            }
-
+            rs.close();
+            stmt.close();
+            
+            return t;
         }
-
         rs.close();
         stmt.close();
-        conn.close();
+
         return null;
 
     }
 
     public List<Trabalho> buscaPorCategoria(String categoria) throws SQLException,
             ClassNotFoundException {
-
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         String sql = "SELECT * FROM Trabalho WHERE categoria = ?;";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -147,7 +120,6 @@ public class TrabalhoDAO {
 
         rs.close();
         stmt.close();
-        conn.close();
 
         return lista;
     }
@@ -155,11 +127,6 @@ public class TrabalhoDAO {
     public List<Trabalho> buscaPorCidade(String cidade) throws SQLException,
             ClassNotFoundException {
 
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
         String sql = "SELECT * FROM Trabalho WHERE cidade ilike ?;";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, cidade);
@@ -170,23 +137,15 @@ public class TrabalhoDAO {
         while (rs.next()) {
             Trabalho trabalho = buscarTrabalho(rs.getInt("codigo"));
             lista.add(trabalho);
-            System.out.println(trabalho.toString());
-        }
 
+        }
         rs.close();
         stmt.close();
-        conn.close();
 
         return lista;
     }
 
     public void deletar(int trabalho) throws SQLException {
-
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         String sql = "DELETE FROM Trabalho WHERE codigo = ?;";
 
@@ -194,16 +153,10 @@ public class TrabalhoDAO {
         stmt.setInt(1, trabalho);
         stmt.execute();
         stmt.close();
-        conn.close();
+
     }
 
     public Trabalho atualizar(Trabalho t) throws SQLException, ClassNotFoundException {
-
-        try {
-            conn = Conexao.getConnection();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
         String sql = "UPDATE Trabalho set cidade = ?, estado = ?, titulo = ?,"
                 + " descricao = ?, horario = ?, valor = ?, categoria = ? "
@@ -221,9 +174,18 @@ public class TrabalhoDAO {
 
         stmt.execute();
         stmt.close();
-        conn.close();
 
         return buscarTrabalho(t.getCodigo());
     }
 
+    public void fecharConexao() {
+
+        try {
+            if (conn != null & !conn.isClosed()) {
+                conn.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

@@ -18,13 +18,12 @@ public class UsuarioDAO {
 
     public UsuarioDAO() throws SQLException, ClassNotFoundException,
             NoSuchAlgorithmException {
+
         conn = Conexao.getConnection();
         md = MessageDigest.getInstance("MD5");
     }
 
     public boolean salvar(Usuario u) throws SQLException {
-
-        abrirConexao();
 
         String sql = "INSERT INTO Usuario (nome,email,senha,cidade,estado)"
                 + " VALUES (?,?,?,?,?)";
@@ -40,15 +39,12 @@ public class UsuarioDAO {
 
         stmt.execute();
         stmt.close();
-        fecharConexao();
 
         return true;
 
     }
 
     public Usuario buscar(String email) throws SQLException {
-
-        abrirConexao();
 
         String sql = "SELECT * FROM Usuario WHERE email = ?";
         PreparedStatement stmt = conn.prepareStatement(sql);
@@ -67,14 +63,11 @@ public class UsuarioDAO {
             return u;
         }
         stmt.close();
-        fecharConexao();
 
         return null;
     }
 
     public boolean login(String email, String senha) throws SQLException {
-
-        abrirConexao();
 
         md.update(senha.getBytes(), 0, senha.length());
         String senhaMD5 = new BigInteger(1, md.digest()).toString();
@@ -86,17 +79,15 @@ public class UsuarioDAO {
 
         if (stmt.executeQuery().next()) {
             stmt.close();
+
             return true;
         }
         stmt.close();
-        fecharConexao();
 
         return false;
     }
 
     public Usuario atualizar(Usuario u) throws SQLException {
-
-        abrirConexao();
 
         md.update(u.getSenha().getBytes(), 0, u.getSenha().length());
 
@@ -111,24 +102,22 @@ public class UsuarioDAO {
 
         stmt.execute();
         stmt.close();
-        fecharConexao();
 
         return buscar(u.getEmail());
     }
 
-    private void abrirConexao() {
-        try {
-
+    public void abrirConexao() {
+        /*try {
             conn = Conexao.getConnection();
 
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 
-    private void fecharConexao() {
+    public void fecharConexao() {
 
         try {
             if (conn != null & !conn.isClosed()) {

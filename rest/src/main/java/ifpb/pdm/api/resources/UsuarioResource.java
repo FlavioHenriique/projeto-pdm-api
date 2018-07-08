@@ -32,6 +32,7 @@ public class UsuarioResource {
         try {
             UsuarioDAO dao = new UsuarioDAO();
             Usuario user = dao.buscar(email);
+            dao.fecharConexao();
             if (user != null) {
                 return Response.ok().entity(gson.toJson(user)).build();
             } else {
@@ -56,7 +57,7 @@ public class UsuarioResource {
             if (dao.login(obj.getString("email").toString(),
                     obj.getString("senha").toString())) {
                 Usuario user = dao.buscar(obj.getString("email").toString());
-
+                dao.fecharConexao();
                 return Response.status(Status.OK)
                         .entity(gson.toJson(user))
                         .build();
@@ -81,11 +82,11 @@ public class UsuarioResource {
         try {
             UsuarioDAO dao = new UsuarioDAO();
             Usuario user = gson.fromJson(json, Usuario.class);
-            System.out.println(user.toString());
+            
             if (dao.buscar(user.getEmail()) == null) {
                 if (dao.salvar(user)) {
+                    dao.fecharConexao();
                     return Response.status(Status.CREATED).build();
-
                 }
             } else {
                 return Response.status(Status.FORBIDDEN).build();
@@ -108,7 +109,7 @@ public class UsuarioResource {
         try {
             UsuarioDAO dao = new UsuarioDAO();
             Usuario user = dao.atualizar(gson.fromJson(json, Usuario.class));
-
+            dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(user)).build();
 
         } catch (SQLException | ClassNotFoundException ex) {
@@ -120,5 +121,7 @@ public class UsuarioResource {
 
         return Response.status(Status.FORBIDDEN).build();
     }
-
+    
+    
+    
 }

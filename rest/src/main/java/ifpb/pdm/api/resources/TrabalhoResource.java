@@ -3,8 +3,10 @@ package ifpb.pdm.api.resources;
 import com.google.gson.Gson;
 import ifpb.pdm.api.dao.TrabalhoDAO;
 import ifpb.pdm.api.model.Trabalho;
+import java.security.NoSuchAlgorithmException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.ws.rs.Consumes;
@@ -33,12 +35,15 @@ public class TrabalhoResource {
         try {
             TrabalhoDAO dao = new TrabalhoDAO();
             if (dao.cadastrar(trabalho)) {
+                dao.fecharConexao();
                 return Response.status(Status.CREATED).build();
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -51,13 +56,17 @@ public class TrabalhoResource {
 
         try {
             TrabalhoDAO dao = new TrabalhoDAO();
-
-            return Response.ok().entity(gson.toJson(dao.meusTrabalhos(email)))
+            List<Trabalho> lista = dao.meusTrabalhos(email);
+            dao.fecharConexao();
+            
+            return Response.ok().entity(gson.toJson(lista))
                     .build();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        }catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.ok().build();
     }
@@ -71,9 +80,10 @@ public class TrabalhoResource {
         try {
             TrabalhoDAO dao = new TrabalhoDAO();
             if (campo.equals("categoria")) {
-
-                return Response.ok().entity(gson.toJson(
-                        dao.buscaPorCategoria(valor))).build();
+                
+                List<Trabalho> lista = dao.buscaPorCategoria(valor);
+                dao.fecharConexao();
+                return Response.ok().entity(gson.toJson(lista)).build();
 
             } else {
 
@@ -85,6 +95,8 @@ public class TrabalhoResource {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
@@ -96,13 +108,15 @@ public class TrabalhoResource {
         try {
             TrabalhoDAO dao = new TrabalhoDAO();
             dao.deletar(trabalho);
-
+            dao.fecharConexao();
             return Response.ok().build();
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.CONFLICT).build();
@@ -116,13 +130,15 @@ public class TrabalhoResource {
         try {
             TrabalhoDAO dao = new TrabalhoDAO();
             Trabalho t = dao.atualizar(gson.fromJson(json,Trabalho.class));
-            
+            dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(t)).build();
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.NOT_FOUND).build();

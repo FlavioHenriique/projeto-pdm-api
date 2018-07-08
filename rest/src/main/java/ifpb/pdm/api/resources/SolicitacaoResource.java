@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import ifpb.pdm.api.dao.SolicitacaoDAO;
 import ifpb.pdm.api.model.Trabalho;
 import ifpb.pdm.api.model.Usuario;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
@@ -35,11 +36,11 @@ public class SolicitacaoResource {
             SolicitacaoDAO dao = new SolicitacaoDAO();
             JSONObject jo = new JSONObject(json);
             if (dao.salvar(jo.getInt("trabalho"), jo.getString("email"))) {
-
+                dao.fecharConexao();
                 return Response.status(Status.CREATED).build();
-                
+
             } else {
-                
+
                 return Response.status(Status.FORBIDDEN).build();
             }
         } catch (SQLException ex) {
@@ -48,6 +49,8 @@ public class SolicitacaoResource {
 
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -60,13 +63,15 @@ public class SolicitacaoResource {
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
             List<Usuario> solicitantes = dao.buscarSolicitacoes(trabalho);
-
+            dao.fecharConexao();
             return Response.status(Status.FOUND).entity(gson.toJson(solicitantes))
                     .build();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.BAD_REQUEST).build();
     }
@@ -76,18 +81,20 @@ public class SolicitacaoResource {
     public Response aceitarSolicitacao(String json) {
 
         JSONObject dados = new JSONObject(json);
-        
+
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
             dao.aceitarSolicitacao(dados.getString("emailUsuario"),
                     dados.getInt("codTrabalho"));
-
+            dao.fecharConexao();
             return Response.status(Status.OK).build();
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SolicitacaoResource.class.getName())
                     .log(Level.SEVERE, null, ex);
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -96,39 +103,42 @@ public class SolicitacaoResource {
     @DELETE
     @Path("/{emailUsuario}/{codTrabalho}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response recusarSolicitacao(@PathParam("emailUsuario")
-            String emailUsuario, @PathParam("codTrabalho") int codTrabalho) {
+    public Response recusarSolicitacao(@PathParam("emailUsuario") String emailUsuario, @PathParam("codTrabalho") int codTrabalho) {
 
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
             dao.recusarSolicitacao(emailUsuario, codTrabalho);
-
+            dao.fecharConexao();
             return Response.ok().build();
 
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return Response.status(Status.CONFLICT).build();
     }
-    
+
     @GET
     @Path("/busca/{email}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response minhasSolicitacoes(@PathParam("email") String email){
-        
+    public Response minhasSolicitacoes(@PathParam("email") String email) {
+
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
             List<Trabalho> lista = dao.minhasSolicitacoes(email);
-            
+            dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(lista)).build();
-            
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.BAD_REQUEST).build();
     }

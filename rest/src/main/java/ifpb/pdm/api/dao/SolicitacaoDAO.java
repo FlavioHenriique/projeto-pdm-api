@@ -15,14 +15,17 @@ import java.util.logging.Logger;
 public class SolicitacaoDAO {
 
     private Connection conn;
+    private UsuarioDAO dao;
+    private TrabalhoDAO daoTrabalho;
 
-    public SolicitacaoDAO() throws SQLException, ClassNotFoundException {
+    public SolicitacaoDAO() throws SQLException, ClassNotFoundException,
+            NoSuchAlgorithmException {
         conn = Conexao.getConnection();
+        daoTrabalho = new TrabalhoDAO();
+        dao = new UsuarioDAO();
     }
 
     public boolean salvar(int trabalho, String email) throws SQLException {
-
-        abrirConexao();
 
         String sql = "INSERT INTO solicita_trabalho (emailUsuario, codTrabalho,"
                 + " estado) VALUES (?,?,?) ;";
@@ -32,14 +35,12 @@ public class SolicitacaoDAO {
         stmt.setString(3, "pendente");
         stmt.execute();
         stmt.close();
-        fecharConexao();
 
         return true;
     }
 
     public List<Usuario> buscarSolicitacoes(int trabalho) throws SQLException,
             ClassNotFoundException {
-        abrirConexao();
 
         String sql = "SELECT emailUsuario from solicita_trabalho"
                 + " WHERE codTrabalho = ? AND estado ilike 'pendente';";
@@ -48,41 +49,33 @@ public class SolicitacaoDAO {
         ResultSet rs = stmt.executeQuery();
 
         List<Usuario> lista = new ArrayList<>();
-        UsuarioDAO dao;
-        try {
-            dao = new UsuarioDAO();
 
-            while (rs.next()) {
-                Usuario u = dao.buscar(rs.getString("emailUsuario"));
-                lista.add(u);
-            }
-        } catch (NoSuchAlgorithmException ex) {
-            ex.printStackTrace();
+        while (rs.next()) {
+            Usuario u = dao.buscar(rs.getString("emailUsuario"));
+            lista.add(u);
         }
-        fecharConexao();
-
+        
         return lista;
     }
 
     public void aceitarSolicitacao(String email, int trabalho) throws SQLException {
 
-        abrirConexao();
-
         String sql = "UPDATE solicita_trabalho set estado = 'aceita' WHERE"
-                + " emailUsuario = ? AND codTrabalho = ? ;";
+                + " emailUsuario = ? AND codTrabalho = ? ;"
+                + "UPDATE trabalho set contratado = ? WHERE codigo = ?;";
 
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, email);
         stmt.setInt(2, trabalho);
+        stmt.setString(3, email);
+        stmt.setInt(4, trabalho);
 
         stmt.execute();
         stmt.close();
-        fecharConexao();
+
     }
 
     public void recusarSolicitacao(String email, int trabalho) throws SQLException {
-
-        abrirConexao();
 
         String sql = "DELETE FROM Solicita_trabalho WHERE emailUsuario = ? "
                 + " AND codTrabalho = ? ;";
@@ -93,34 +86,32 @@ public class SolicitacaoDAO {
 
         stmt.execute();
         stmt.close();
-        fecharConexao();
+
     }
 
     public List<Trabalho> minhasSolicitacoes(String email) throws SQLException,
-            ClassNotFoundException{
-        
-        abrirConexao();
+            ClassNotFoundException {
+
         List<Trabalho> lista = new ArrayList<>();
-       
+
         String sql = "SELECT codTrabalho FROM solicita_trabalho WHERE "
                 + "emailUsuario = ? ;";
-        
+
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, email);
         ResultSet rs = stmt.executeQuery();
-        TrabalhoDAO dao = new TrabalhoDAO();
-        
-        while(rs.next()){
-            Trabalho t = dao.buscarTrabalho(rs.getInt("codTrabalho"));
+
+        while (rs.next()) {
+            Trabalho t = daoTrabalho.buscarTrabalho(rs.getInt("codTrabalho"));
+
             lista.add(t);
         }
-        fecharConexao();
         
         return lista;
     }
-    
+
     private void abrirConexao() {
-        try {
+        /* try {
             if (conn == null) {
                 conn = Conexao.getConnection();
             }
@@ -129,10 +120,10 @@ public class SolicitacaoDAO {
             Logger.getLogger(TrabalhoDAO.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(SolicitacaoDAO.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }
 
-    private void fecharConexao() {
+    public void fecharConexao() {
 
         try {
             if (conn != null && !conn.isClosed()) {
@@ -143,7 +134,5 @@ public class SolicitacaoDAO {
             Logger.getLogger(UsuarioDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
 
 }
