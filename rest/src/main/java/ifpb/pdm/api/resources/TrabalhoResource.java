@@ -38,12 +38,9 @@ public class TrabalhoResource {
                 dao.fecharConexao();
                 return Response.status(Status.CREATED).build();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -61,12 +58,9 @@ public class TrabalhoResource {
             
             return Response.ok().entity(gson.toJson(lista))
                     .build();
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        }catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.ok().build();
     }
@@ -91,14 +85,11 @@ public class TrabalhoResource {
                         dao.buscaPorCidade(valor))).build();
 
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return Response.status(Status.FORBIDDEN).build();
     }
 
     @DELETE
@@ -111,12 +102,9 @@ public class TrabalhoResource {
             dao.fecharConexao();
             return Response.ok().build();
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.CONFLICT).build();
@@ -133,12 +121,9 @@ public class TrabalhoResource {
             dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(t)).build();
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(TrabalhoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.NOT_FOUND).build();

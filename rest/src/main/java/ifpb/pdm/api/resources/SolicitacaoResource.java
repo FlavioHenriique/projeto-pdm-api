@@ -50,7 +50,7 @@ public class SolicitacaoResource {
         } catch (ClassNotFoundException ex) {
             ex.printStackTrace();
         } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -66,12 +66,8 @@ public class SolicitacaoResource {
             dao.fecharConexao();
             return Response.status(Status.FOUND).entity(gson.toJson(solicitantes))
                     .build();
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.BAD_REQUEST).build();
     }
@@ -88,13 +84,9 @@ public class SolicitacaoResource {
                     dados.getInt("codTrabalho"));
             dao.fecharConexao();
             return Response.status(Status.OK).build();
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName())
-                    .log(Level.SEVERE, null, ex);
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.BAD_REQUEST).build();
@@ -111,12 +103,9 @@ public class SolicitacaoResource {
             dao.fecharConexao();
             return Response.ok().build();
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.CONFLICT).build();
@@ -133,12 +122,9 @@ public class SolicitacaoResource {
             dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(lista)).build();
 
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.BAD_REQUEST).build();
     }

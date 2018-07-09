@@ -38,11 +38,10 @@ public class UsuarioResource {
             } else {
                 return Response.status(Status.NOT_FOUND).build();
             }
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
          
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return null;
@@ -63,12 +62,9 @@ public class UsuarioResource {
                         .build();
 
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
         return Response.status(Status.NOT_FOUND).build();
     }
@@ -92,10 +88,9 @@ public class UsuarioResource {
                 return Response.status(Status.FORBIDDEN).build();
             }
 
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-        } catch (NoSuchAlgorithmException ex) {
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.ok().entity(null).build();
@@ -112,11 +107,10 @@ public class UsuarioResource {
             dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(user)).build();
 
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException 
+                | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
 
-        } catch (NoSuchAlgorithmException ex) {   
-            Logger.getLogger(UsuarioResource.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return Response.status(Status.FORBIDDEN).build();
