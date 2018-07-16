@@ -26,8 +26,8 @@ public class TrabalhoDAO {
     public boolean cadastrar(Trabalho t) throws SQLException {
 
         String sql = "INSERT INTO Trabalho (titulo,estado,cidade,valor,horario,"
-                + "data,descricao,contratante,categoria) values "
-                + "(?,?,?,?,?,?,?,?,?);";
+                + "data,descricao,contratante,categoria,momentoCriacao) values "
+                + "(?,?,?,?,?,?,?,?,?,current_timestamp);";
 
         PreparedStatement stmt = conn.prepareStatement(sql);
 
@@ -50,7 +50,8 @@ public class TrabalhoDAO {
     public List<Trabalho> meusTrabalhos(String email) throws SQLException,
             ClassNotFoundException {
 
-        String sql = "SELECT codigo FROM Trabalho WHERE contratante = ?";
+        String sql = "SELECT codigo FROM Trabalho WHERE contratante = ? ORDER BY"
+                + " momentoCriacao DESC";
         PreparedStatement stmt = conn.prepareStatement(sql);
         stmt.setString(1, email);
 
