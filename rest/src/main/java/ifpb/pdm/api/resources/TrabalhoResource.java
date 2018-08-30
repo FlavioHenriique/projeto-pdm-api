@@ -55,7 +55,7 @@ public class TrabalhoResource {
             TrabalhoDAO dao = new TrabalhoDAO();
             List<Trabalho> lista = dao.meusTrabalhos(email);
             dao.fecharConexao();
-            
+            System.out.println(lista.size());
             return Response.ok().entity(gson.toJson(lista))
                     .build();
         } catch (SQLException | ClassNotFoundException 

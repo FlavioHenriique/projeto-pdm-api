@@ -6,12 +6,12 @@ import java.sql.SQLException;
 
 public class Conexao {
 
-    private static final String url = "jdbc:postgresql://ec2-54-243-235-153.compute-1.amazonaws.com:5432/d97ic377a2cvph?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
-    private static final String password = "1e1a33499f118bb58765b90abfa9531c085989826d61af0f46b558a75d1c6721";
-    private static final String user = "vmgwpjrxuzqnjl";
-    //private static final String url = "jdbc:postgresql://host-banco:5432/projeto-pdm";
-    //private static final String password = "flavio22";
-    //private static final String user = "postgres";
+    //private static final String url = "jdbc:postgresql://ec2-54-243-235-153.compute-1.amazonaws.com:5432/d97ic377a2cvph?ssl=true&sslfactory=org.postgresql.ssl.NonValidatingFactory";
+    //private static final String password = "1e1a33499f118bb58765b90abfa9531c085989826d61af0f46b558a75d1c6721";
+    //private static final String user = "vmgwpjrxuzqnjl";
+    private static final String url = "jdbc:postgresql://host-banco:5432/projeto-pdm";
+    private static final String password = "flavio22";
+    private static final String user = "postgres";
 
     public static Connection getConnection() throws SQLException, ClassNotFoundException {
 
