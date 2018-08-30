@@ -36,12 +36,15 @@ CREATE TABLE SOLICITA_TRABALHO(
 	PRIMARY KEY (emailUsuario,codTrabalho)
 );
 
-insert into usuario (nome,email,senha,cidade,estado) values ('Flavio','flavio@gmail.com',
-'328838659689916417705350303073944936763','sousa','pb');
-insert into usuario (nome,email,senha,cidade,estado) values ('Ari','ari@gmail.com',
-'335179228355690360138234256155070591937','sousa','pb');
+insert into usuario (nome,email,senha,cidade,estado) 
+values ('Flavio','flavio@gmail.com','328838659689916417705350303073944936763',
+'sousa','pb');
+insert into usuario (nome,email,senha,cidade,estado) values 
+('Ari','ari@gmail.com','335179228355690360138234256155070591937','sousa','pb');
 
-insert into trabalho(titulo,estado,cidade,valor,horario,data,descricao,contratante,categoria,momentocriacao)
-values ('Trabalho 1', 'PB', 'Sousa', 20,'10:30','2018-02-05','DKOSFKDO FKODFKDO FKDO','flavio@gmail.com','Construção',current_timestamp);
+insert into trabalho(titulo,estado,cidade,valor,horario,data,descricao,
+contratante,categoria,momentocriacao) values ('Trabalho 1', 'PB', 
+'Sousa', 20,'10:30','2018-02-05','DKOSFKDO FKODFKDO FKDO','flavio@gmail.com',
+'Construção',current_timestamp);
 
 
