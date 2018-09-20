@@ -1,7 +1,9 @@
 package ifpb.pdm.api.resources;
 
 import com.google.gson.Gson;
+import ifpb.pdm.api.dao.NotificacaoDAO;
 import ifpb.pdm.api.dao.SolicitacaoDAO;
+import ifpb.pdm.api.model.Notificacao;
 import ifpb.pdm.api.model.Trabalho;
 import ifpb.pdm.api.model.Usuario;
 import java.security.NoSuchAlgorithmException;
@@ -9,6 +11,8 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Stateless;
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -26,7 +30,7 @@ import org.json.JSONObject;
 @Path("solicitacao")
 public class SolicitacaoResource {
 
-    Gson gson = new Gson();
+    private Gson gson = new Gson();
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -44,16 +48,14 @@ public class SolicitacaoResource {
                 return Response.status(Status.FORBIDDEN).build();
             }
         } catch (SQLException ex) {
-
             ex.printStackTrace();
-
         } catch (ClassNotFoundException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         } catch (NoSuchAlgorithmException ex) {
-            ex.printStackTrace();
+            Logger.getLogger(SolicitacaoResource.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return Response.status(Status.BAD_REQUEST).build();
+        return Response.status(Status.BAD_REQUEST)
+                .build();
     }
 
     @GET
@@ -66,8 +68,9 @@ public class SolicitacaoResource {
             dao.fecharConexao();
             return Response.status(Status.FOUND).entity(gson.toJson(solicitantes))
                     .build();
-        } catch (SQLException | ClassNotFoundException | NoSuchAlgorithmException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
+
         }
         return Response.status(Status.BAD_REQUEST).build();
     }
@@ -75,17 +78,16 @@ public class SolicitacaoResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response aceitarSolicitacao(String json) {
-
+        SolicitacaoDAO dao = new SolicitacaoDAO();
         JSONObject dados = new JSONObject(json);
 
         try {
-            SolicitacaoDAO dao = new SolicitacaoDAO();
+
             dao.aceitarSolicitacao(dados.getString("emailUsuario"),
                     dados.getInt("codTrabalho"));
             dao.fecharConexao();
             return Response.status(Status.OK).build();
-        } catch (SQLException | ClassNotFoundException
-                | NoSuchAlgorithmException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
 
@@ -95,7 +97,8 @@ public class SolicitacaoResource {
     @DELETE
     @Path("/{emailUsuario}/{codTrabalho}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response recusarSolicitacao(@PathParam("emailUsuario") String emailUsuario, @PathParam("codTrabalho") int codTrabalho) {
+    public Response recusarSolicitacao(@PathParam("emailUsuario") String emailUsuario,
+            @PathParam("codTrabalho") int codTrabalho) {
 
         try {
             SolicitacaoDAO dao = new SolicitacaoDAO();
@@ -103,8 +106,7 @@ public class SolicitacaoResource {
             dao.fecharConexao();
             return Response.ok().build();
 
-        } catch (SQLException | ClassNotFoundException
-                | NoSuchAlgorithmException ex) {
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
 
@@ -122,11 +124,19 @@ public class SolicitacaoResource {
             dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(lista)).build();
 
-        } catch (SQLException | ClassNotFoundException
-                | NoSuchAlgorithmException ex) {
+        } catch (SQLException | ClassNotFoundException ex) {
             ex.printStackTrace();
         }
         return Response.status(Status.BAD_REQUEST).build();
     }
 
+    @GET
+    @Path("/notificacoes/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response minhasNotificacoes(@PathParam("email") String email) {
+
+        NotificacaoDAO dao = new NotificacaoDAO();
+        return Response.ok().entity(dao.minhasNotificacoes(email)).build();
+
+    }
 }

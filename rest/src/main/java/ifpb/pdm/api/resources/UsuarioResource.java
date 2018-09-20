@@ -38,10 +38,10 @@ public class UsuarioResource {
             } else {
                 return Response.status(Status.NOT_FOUND).build();
             }
-        } catch (SQLException | ClassNotFoundException 
+        } catch (SQLException | ClassNotFoundException
                 | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
-         
+
         }
 
         return null;
@@ -62,7 +62,7 @@ public class UsuarioResource {
                         .build();
 
             }
-        } catch (SQLException | ClassNotFoundException 
+        } catch (SQLException | ClassNotFoundException
                 | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
         }
@@ -78,7 +78,7 @@ public class UsuarioResource {
         try {
             UsuarioDAO dao = new UsuarioDAO();
             Usuario user = gson.fromJson(json, Usuario.class);
-            
+
             if (dao.buscar(user.getEmail()) == null) {
                 if (dao.salvar(user)) {
                     dao.fecharConexao();
@@ -88,7 +88,7 @@ public class UsuarioResource {
                 return Response.status(Status.FORBIDDEN).build();
             }
 
-        } catch (SQLException | ClassNotFoundException 
+        } catch (SQLException | ClassNotFoundException
                 | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
         }
@@ -107,15 +107,12 @@ public class UsuarioResource {
             dao.fecharConexao();
             return Response.status(Status.OK).entity(gson.toJson(user)).build();
 
-        } catch (SQLException | ClassNotFoundException 
+        } catch (SQLException | ClassNotFoundException
                 | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
 
         }
-
         return Response.status(Status.FORBIDDEN).build();
     }
-    
-    
-    
+
 }

@@ -36,6 +36,19 @@ CREATE TABLE SOLICITA_TRABALHO(
 	PRIMARY KEY (emailUsuario,codTrabalho)
 );
 
+CREATE TABLE NOTIFICACAO(
+	texto VARCHAR,
+	codtrabalho int,
+	emailSolicitante VARCHAR,
+	emailDono VARCHAR,
+	FOREIGN KEY (emaildono) REFERENCES Usuario(email) 
+	ON DELETE CASCADE,
+	FOREIGN KEY (emailSolicitante) REFERENCES Usuario(email)
+	ON DELETE CASCADE,
+	FOREIGN KEY (codTrabalho) REFERENCES Trabalho(codigo)
+	ON DELETE CASCADE
+);
+
 insert into usuario (nome,email,senha,cidade,estado) 
 values ('Flavio','flavio@gmail.com','328838659689916417705350303073944936763',
 'sousa','pb');

@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.ejb.Stateless;
 
 public class SolicitacaoDAO {
 
@@ -18,21 +19,35 @@ public class SolicitacaoDAO {
     private UsuarioDAO dao;
     private TrabalhoDAO daoTrabalho;
 
-    public SolicitacaoDAO() throws SQLException, ClassNotFoundException,
-            NoSuchAlgorithmException {
-        conn = Conexao.getConnection();
-        daoTrabalho = new TrabalhoDAO();
-        dao = new UsuarioDAO();
+    public SolicitacaoDAO() {
+
+        try {
+            conn = Conexao.getConnection();
+            daoTrabalho = new TrabalhoDAO();
+            dao = new UsuarioDAO();
+        } catch (SQLException | ClassNotFoundException
+                | NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+        }
+
     }
 
-    public boolean salvar(int trabalho, String email) throws SQLException {
+    public boolean salvar(int trabalho, String email) throws SQLException,
+            ClassNotFoundException, NoSuchAlgorithmException {
 
         String sql = "INSERT INTO solicita_trabalho (emailUsuario, codTrabalho,"
-                + " estado) VALUES (?,?,?) ;";
+                + " estado) VALUES (?,?,?) ; "
+                + "INSERT INTO Notificacao (texto,codtrabalho,emailsolicitante, emaildono) "
+                + "VALUES (?,?,?,?);";
+        TrabalhoDAO dao = new TrabalhoDAO();
         PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setInt(2, trabalho);
         stmt.setString(1, email);
+        stmt.setInt(2, trabalho);
         stmt.setString(3, "pendente");
+        stmt.setString(4, email + " solicitou um trabalho seu!");
+        stmt.setInt(5, trabalho);
+        stmt.setString(6, email);
+        stmt.setString(7, dao.buscarTrabalho(trabalho).getContratante().getEmail());
         stmt.execute();
         stmt.close();
 
@@ -54,7 +69,7 @@ public class SolicitacaoDAO {
             Usuario u = dao.buscar(rs.getString("emailUsuario"));
             lista.add(u);
         }
-        
+
         return lista;
     }
 
@@ -62,30 +77,56 @@ public class SolicitacaoDAO {
 
         String sql = "UPDATE solicita_trabalho set estado = 'aceita' WHERE"
                 + " emailUsuario = ? AND codTrabalho = ? ;"
-                + "UPDATE trabalho set contratado = ? WHERE codigo = ?;";
+                + "UPDATE trabalho set contratado = ? WHERE codigo = ?;"
+                + "INSERT INTO NOTIFICACAO (texto,codtrabalho,emailsolicitante,emaildono) "
+                + "VALUES (?,?,?, ?);";
 
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, email);
-        stmt.setInt(2, trabalho);
-        stmt.setString(3, email);
-        stmt.setInt(4, trabalho);
+        try {
+            TrabalhoDAO tdao = new TrabalhoDAO();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            stmt.setInt(2, trabalho);
+            stmt.setString(3, email);
+            stmt.setInt(4, trabalho);
+            stmt.setString(5, "Sua solicitação foi aceita!");
+            stmt.setInt(6, trabalho);
+            stmt.setString(7, email);
+            stmt.setString(8, tdao.buscarTrabalho(trabalho).getContratante().getEmail());
+            stmt.execute();
+            stmt.close();
 
-        stmt.execute();
-        stmt.close();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
     public void recusarSolicitacao(String email, int trabalho) throws SQLException {
 
         String sql = "DELETE FROM Solicita_trabalho WHERE emailUsuario = ? "
-                + " AND codTrabalho = ? ;";
+                + " AND codTrabalho = ? ; "
+                + "INSERT INTO NOTIFICACAO (texto,codtrabalho,emailsolicitante, emaildono) "
+                + "values (?,?,?, ?)";
 
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, email);
-        stmt.setInt(2, trabalho);
-
-        stmt.execute();
-        stmt.close();
+        TrabalhoDAO tdao;
+        try {
+            tdao = new TrabalhoDAO();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, email);
+            stmt.setInt(2, trabalho);
+            stmt.setString(3, "Sua solicitação foi recusada...");
+            stmt.setInt(4, trabalho);
+            stmt.setString(5, email);
+            stmt.setString(6, tdao.buscarTrabalho(trabalho).getContratante().getEmail());
+            stmt.execute();
+            stmt.close();
+        } catch (ClassNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+        }
 
     }
 
@@ -93,7 +134,6 @@ public class SolicitacaoDAO {
             ClassNotFoundException {
 
         List<Trabalho> lista = new ArrayList<>();
-
         String sql = "SELECT codTrabalho FROM solicita_trabalho WHERE "
                 + "emailUsuario = ? ;";
 
@@ -106,7 +146,7 @@ public class SolicitacaoDAO {
 
             lista.add(t);
         }
-        
+
         return lista;
     }
 
